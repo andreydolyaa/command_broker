@@ -36,9 +36,9 @@ export const getAllCommands = async (req, res) => {
       currentPage: page,
     };
 
-    return res.status(200).send({ data: responseData });
+    res.status(200).send({ data: responseData });
   } catch (error) {
-    return res.status(400).send({ message: "No commands found", error });
+    res.status(400).send({ message: "No commands found", error });
   }
 };
 
@@ -46,21 +46,39 @@ export const getAllCommands = async (req, res) => {
 export const getCommandById = async (req, res) => {
   try {
     const command = await Kb.findOne({ _id: req.params.id });
-    return res.status(200).send({});
+    res.status(200).send({});
   } catch (error) {
-    return res
-      .status(400)
-      .send({ message: "Could not get command by id", error });
+    res.status(400).send({ message: "Could not get command by id", error });
   }
 };
+
+export const addCommand = async (req, res) => {
+  try {
+    const command = await Kb.create({ ...req.body });
+    res.status(200).send({ message: "command added", command });
+  } catch (error) {
+    res.status(400).send({ message: "Failed to add command", error });
+  }
+};
+
+export const addBulkCommands = async (req, res) => {
+  try {
+    const commands = await Kb.insertMany(req.body);
+    res.status(200).send({ message: "commands bulk added", commands });
+  } catch (error) {
+    res.status(400).send({ message: "Failed to add bulk commands", error });
+  }
+};
+
+
 
 // export const deleteScan = async (req, res)F => {
 //   try {
 //     const scan = await Kb.findOneAndDelete({ id: req.params.id });
 //     scan.status = PROC_STATUS.DELETED;
 //     HttpActions.notify(subscriptionPaths.NMAP_ALL, scan, "toast", req.userId);
-//     return res.status(200).send({ message: "Scan deleted", id: req.params.id });
+//     res.status(200).send({ message: "Scan deleted", id: req.params.id });
 //   } catch (error) {
-//     return res.status(400).send({ message: "Failed to delete scan", error });
+//     res.status(400).send({ message: "Failed to delete scan", error });
 //   }
 // };
